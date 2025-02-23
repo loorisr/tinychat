@@ -2,6 +2,7 @@ from openai import OpenAI
 import streamlit as st
 import time
 from dotenv import load_dotenv
+from datetime import datetime
 import os
 
 load_dotenv()  # take environment variables from .env.
@@ -29,6 +30,7 @@ for message in st.session_state.messages:
 
 if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
+
     with st.chat_message("user"):
         st.markdown(prompt)
 
@@ -52,3 +54,4 @@ if prompt := st.chat_input("What is up?"):
         last_respoonse = st.session_state.messages[-1]["content"]
         number_words = len(last_respoonse.split())
         st.markdown( f"\n *{number_words} mots, temps: {endTime-startTime:.2f}s, {number_words/(endTime-startTime):.0f} mots/s*")
+        print(f"{datetime.now().isoformat()} - User prompt: {prompt} - response # words: {number_words}")
