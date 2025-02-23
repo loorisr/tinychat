@@ -1,0 +1,14 @@
+services:
+  tinychat:
+    container_name: tinychat
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - BASE_URL=
+      - MODEL=
+      - API_KEY=
+    security_opt:
+      - no-new-privileges=true
+    read_only: true
+    restart: unless-stopped
