@@ -21,4 +21,4 @@ COPY app .
 EXPOSE 8000
 
 # Command to run the application
-ENTRYPOINT ["streamlit", "run", "app/app.py", "--server.port=8000", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8000", "--server.address=0.0.0.0"]
