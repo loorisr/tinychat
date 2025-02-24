@@ -4,9 +4,14 @@ services:
     build: .
     ports:
       - "8000:8000"
-    security_opt:
-      - no-new-privileges=true
+    environment:
+      - FIRECRAWL_API_KEY=
+      - FIRECRAWL_API_URL=
     volumes:
       - ./models.yaml:/models.yaml
     read_only: true
     restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges=true
