@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LLM Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>LLM Chat</h1>
+        <div class="chat-box" id="chat-box"></div>
+        <label for="llm-select">Choose an LLM:</label>
+        <select id="llm-select">
+            {% for llm_name in llm_names %}
+        </select>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message..." 
+                   onkeypress="if(event.keyCode === 13) sendMessage()">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function appendMessage(role, content) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = content; // Use innerHTML to allow for <br> tags
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function appendStreamingMessage(role, content) {
+            const chatBox = document.getElementById('chat-box');
+            let messageDiv = chatBox.lastElementChild;
+
+            // Check if the last message was from the assistant and not already complete
+            if (messageDiv && messageDiv.className === 'message assistant') {
+                messageDiv.innerHTML += content; // Append to existing content
+            } else {
+                messageDiv = document.createElement('div');
+                messageDiv.className = `message ${role}`;
+                messageDiv.innerHTML = content;
+                chatBox.appendChild(messageDiv);
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        let websocket;
+
+        function connectWebSocket() {
+            websocket = new WebSocket(`ws://${window.location.host}/chat`);
+
+            websocket.onopen = function(event) {
+                console.log("WebSocket connection opened");
+            };
+
+            websocket.onmessage = function(event) {
+                if (typeof event.data === 'string') {
+                    appendStreamingMessage('assistant', event.data);
+                } 
+            };
+
+            websocket.onclose = function(event) {
+                console.log("WebSocket connection closed");
+                appendMessage('assistant', 'Connection closed');
+            };
+
+            websocket.onerror = function(event) {
+                console.error("WebSocket error:", event);
+                appendMessage('assistant', 'Connection error');
+            };
+        }
+
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            const llmSelect = document.getElementById('llm-select');
+            const selectedLLM = llmSelect.value;
+
+            if (!message) return;
+
+            appendMessage('user', message);
+            input.value = '';
+
+            if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+                appendMessage('assistant', 'Reconnecting...');
+                connectWebSocket();
+                // Add a small delay to allow the connection to establish
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            websocket.send(JSON.stringify({ message: message, llm: selectedLLM }));
+
+        }
+
+        connectWebSocket(); // Connect on page load
+    </script>
+</body>
+</html>

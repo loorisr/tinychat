@@ -1,0 +1,12 @@
+services:
+  tinychat:
+    container_name: tinychat
+    build: .
+    ports:
+      - "8000:8000"
+    security_opt:
+      - no-new-privileges=true
+    volumes:
+      - ./models.yaml:/models.yaml
+    read_only: true
+    restart: unless-stopped
