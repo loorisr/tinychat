@@ -6,6 +6,7 @@ import asyncio
 import json
 import yaml
 import time
+import re
 import os
 from pathlib import Path
 from datetime import datetime
@@ -92,7 +93,6 @@ async def chat_endpoint(websocket: WebSocket):
             print(f"Model {llm_config['model_name']}, message {user_message}, IP: {user_ip}")
             response = await litellm.acompletion(
                 model=llm_config["model_name"],
-                #messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
                 messages=message_session,
                 temperature=0.7,
                 api_key=llm_config.get("api_key"),
@@ -112,19 +112,17 @@ async def chat_endpoint(websocket: WebSocket):
 
             message_session.append( {"role": "assistant", "content": assistant_message})
 
-            if "/search" in assistant_message:
+            if "/search" in assistant_message:                
                 query = assistant_message[len("/search "):]
                 assistant_message = ""
                 print(f"Searching for {query}")
                 await websocket.send_text(f"<br />Searching for *{query}* <br/><br/>")
 
                 search_results = firecrawl_client.search(query)
-                #print(json.dumps(search_results['data']))
-                
+
                 message_session.append( {"role": "user", "content": json.dumps(search_results['data'])})
                 response = await litellm.acompletion(
                     model=llm_config["model_name"],
-                    #messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
                     messages=message_session,
                     temperature=0.7,
                     api_key=llm_config.get("api_key"),
@@ -143,21 +141,23 @@ async def chat_endpoint(websocket: WebSocket):
 
             
             if "/scrape" in assistant_message:
-                lines = assistant_message.split()
+                # Regular expression to match URLs
+                url_pattern = r'https?://[^\s]+'
+
+                # Find all URLs in the string
+                urls = re.findall(url_pattern, assistant_message)
                 assistant_message = ""
-                #url = lines[len("/scrape "):]
-                urls = [line for line in lines if line != "/scrape"]
                 print(f"Scraping pages {urls}")
                 await websocket.send_text(f"<br />Scraping pages {urls}<br />")
 
                 scrape_results = firecrawl_client.batch_scrape_urls(urls, params={"formats": ["markdown"]})
-                for page in scrape_results["data"]:
-                    del page["metadata"]
+                markdown_results = ""
+                for page in scrape_results['data']:
+                    markdown_results += page['markdown']
                 
-                message_session.append( {"role": "user", "content": json.dumps(scrape_results["data"])})
+                message_session.append( {"role": "user", "content": markdown_results})
                 response = await litellm.acompletion(
                     model=llm_config["model_name"],
-                    #messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
                     messages=message_session,
                     temperature=0.7,
                     api_key=llm_config.get("api_key"),

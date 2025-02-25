@@ -10,7 +10,7 @@ There are several projects but non of them are very lightweight (hundreds of Mb 
 * https://github.com/fmaclen/hollama
 * ...
 
-So I decided to build a very simple chat interface. The docker image size is 161 mo.
+So I decided to build a very simple chat interface. The docker image size is 153 mo.
 
 It can search on the internet and scrape pages thanks to [Firecrawl](https://www.firecrawl.dev/) (which is self-hostable).
 
