@@ -1,4 +1,5 @@
-Very simple LLM chat frontend with Fastapi
+# TinyChat
+## Very simple LLM chat frontend with Fastapi
 
 Fork from https://github.com/tinygrad/tinygrad/tree/master/examples/tinychat
 
@@ -25,3 +26,5 @@ Features:
     * Weather forecast: https://open-meteo.com/
     * Execute python code: https://github.com/khoj-ai/terrarium `TERRARIUM_URL`
     * Generate charts: https://quickchart.io/  `QUICKCHART_URL`
+
+  ![image](https://github.com/user-attachments/assets/f3c6a798-5172-428b-89ba-877d9129befc)
