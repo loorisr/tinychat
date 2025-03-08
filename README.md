@@ -1,6 +1,6 @@
 Very simple LLM chat frontend with Fastapi
 
-![image](https://github.com/user-attachments/assets/9f8de766-4732-424c-997f-c4ddac95546c)
+Fork from https://github.com/tinygrad/tinygrad/tree/master/examples/tinychat
 
 I wanted a very lightweight and simple chat interface to try several LLM.
 
@@ -8,17 +8,20 @@ There are several projects but non of them are very lightweight (hundreds of Mb 
 * https://github.com/open-webui/open-webui
 * https://github.com/jasonacox/TinyLLM/tree/main/chatbot
 * https://github.com/fmaclen/hollama
+* https://github.com/danny-avila/LibreChat
 * ...
 
-So I decided to build a very simple chat interface. The docker image size is 153 mo.
+I wanted a very simple chat interface. The docker image size is 73 mo!
 
-It can search on the internet and scrape pages thanks to [Firecrawl](https://www.firecrawl.dev/) (which is self-hostable).
+The UI is from [Tinygrad](https://github.com/tinygrad/tinygrad/tree/master/examples/tinychat) and tools have been added.
 
-Thanks to [LiteLLM](https://github.com/BerriAI/litellm), you can configure as many models as you want inside `models.yaml`.
-
-````yaml
-mistral-large:
-  api_key: "your-api-key"
-  endpoint: "https://api.mistral.ai/v1"
-  model_name: "mistral/mistral-large-latest"
-````
+Features:
+* needs a OpenAI compatible API endpoint. LiteLLM Proxy is recommended. Endpoint is env var `LITELLM_URL`
+* Auto discover models (all that are available at /models)
+* Simple history
+* Use of tools:
+    * Search on the internet and scrape pages: [Firecrawl](https://www.firecrawl.dev/) (it is self-hostable). env var : `FIRECRAWL_API_KEY`and `FIRECRAWL_API_URL`
+    * Geocoding: https://open-meteo.com/
+    * Weather forecast: https://open-meteo.com/
+    * Execute python code: https://github.com/khoj-ai/terrarium `TERRARIUM_URL`
+    * Generate charts: https://quickchart.io/  `QUICKCHART_URL`

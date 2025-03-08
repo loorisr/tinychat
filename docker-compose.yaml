@@ -6,9 +6,10 @@ services:
       - "8000:8000"
     environment:
       - FIRECRAWL_API_KEY=
-      - FIRECRAWL_API_URL=http://192.168.10.120:3002
-    volumes:
-      - ./models.yaml:/app/models.yaml
+      - FIRECRAWL_API_URL=
+      - LITELLM_URL=
+      - QUICKCHART_URL=
+      - TERRARIUM_URL=
     read_only: true
     restart: unless-stopped
     cap_drop:

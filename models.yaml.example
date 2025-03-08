@@ -1,9 +1,0 @@
-mistral-small:
-  api_key: ""
-  endpoint: "https://api.mistral.ai/v1"
-  model_name: "mistral/mistral-small-latest"
-  
-
-gemini-2.0-flash:
-  api_key: ""
-  model_name: "gemini/gemini-2.0-flash"
