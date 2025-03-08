@@ -29,6 +29,8 @@ COPY --from=builder --chown=app:app /app /app
 ENV PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
+
+RUN mkdir tmp
 # Run the FastAPI application by default
 # Uses `--host 0.0.0.0` to allow access from outside the container
 CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0"]
